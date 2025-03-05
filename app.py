@@ -7,7 +7,7 @@ from mistralai import Mistral
 import faiss
 
 # Set up your Mistral API key
-api_key = "liU22SqhcuY6W5ckIPxOzcm4yro1CJLX"
+api_key = "oexFUNi7HS8gq55pCPijrij9cd5Q2EMn"
 os.environ["MISTRAL_API_KEY"] = api_key
 
 # Fetching and parsing policy data
