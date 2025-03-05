@@ -2,3 +2,5 @@ streamlit
 numpy
 scikit-learn
 bs4
+faiss
+mistralai 
