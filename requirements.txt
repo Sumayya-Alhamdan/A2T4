@@ -1,6 +1,6 @@
 streamlit
+requests
+beautifulsoup4
+faiss-cpu
 numpy
-scikit-learn
-bs4
-faiss
-mistralai 
+mistralai
