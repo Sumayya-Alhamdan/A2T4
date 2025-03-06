@@ -151,5 +151,5 @@ def streamlit_app():
         st.text_area("Answer:", answer, height=200)
 
 # Run Streamlit app
-if _name_ == '_main_':
+if __name__ == '__main__':
     streamlit_app()
