@@ -8,11 +8,11 @@ import faiss
 import time
 
 
-# Set up your Mistral API key
+# Configure Mistral API key
 api_key = "bR3uQ4MimCQdHqqPJpIIdCF4wKG51fL2"
 os.environ["MISTRAL_API_KEY"] = api_key
 
-# Fetching and parsing policy data
+# Retrieve and extract policy data from the given URL
 def fetch_policy_data(url):
     response = requests.get(url)
     html_doc = response.text
@@ -21,18 +21,18 @@ def fetch_policy_data(url):
     text = tag.text.strip()
     return text
 
-# Chunking function to break text into smaller parts
+# Splits text into smaller chunks of a specified size
 def chunk_text(text, chunk_size=512):
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
 
-# Get embeddings for text chunks
+# Generate embeddings for a list of text chunks
 def get_text_embedding(list_txt_chunks):
     client = Mistral(api_key=api_key)
     time.sleep(1)  
     embeddings_batch_response = client.embeddings.create(model="mistral-embed", inputs=list_txt_chunks)
     return embeddings_batch_response.data
 
-# Initialize FAISS index
+# Create and initialize a FAISS index with the given embeddings
 def create_faiss_index(embeddings):
     embedding_vectors = np.array([embedding.embedding for embedding in embeddings])
     d = embedding_vectors.shape[1]
@@ -41,12 +41,12 @@ def create_faiss_index(embeddings):
     faiss_index.add_with_ids(embedding_vectors, np.array(range(len(embedding_vectors))))
     return faiss_index
 
-# Search for the most relevant chunks based on query embedding
+# Perform a similarity search on the FAISS index to find the most relevant chunks
 def search_relevant_chunks(faiss_index, query_embedding, k=2):
     D, I = faiss_index.search(query_embedding, k)
     return I
 
-# Mistral model to generate answers based on context
+# Generate an answer using the Mistral model based on the provided context
 def mistral_answer(query, context):
     prompt = f"""
     Context information is below.
@@ -62,7 +62,7 @@ def mistral_answer(query, context):
     chat_response = client.chat.complete(model="mistral-large-latest", messages=messages)
     return chat_response.choices[0].message.content
 
-# Streamlit Interface
+# Streamlit UI 
 def streamlit_app():
     st.title('UDST Policies')
     st.markdown(
@@ -70,7 +70,7 @@ def streamlit_app():
         unsafe_allow_html=True
     )
 
-    # List of policies with descriptive names
+    # List of university policies with descriptive titles
     policies = [
         "Registration Policy",
         "Examination Policy",
@@ -105,7 +105,7 @@ def streamlit_app():
         "Sport and Wellness Facilities Policy"
     ]
     
-    # Corresponding policy URLs
+    # Corresponding URLs for each policy document
     policy_urls = [
         "https://www.udst.edu.qa/about-udst/institutional-excellence-ie/policies-and-procedures/registration-policy",
         "https://www.udst.edu.qa/about-udst/institutional-excellence-ie/policies-and-procedures/examination-policy",
@@ -141,38 +141,38 @@ def streamlit_app():
     ]
 
 
-    # Create a dropdown for policy selection
+    # Create a dropdown menu for selecting a policy
     selected_policy = st.selectbox("Select a Policy", policies)
     
-    # Find the corresponding URL for the selected policy
+    # Retrieve the corresponding URL for the selected policy
     selected_policy_url = policy_urls[policies.index(selected_policy)]
     
-    # Fetch policy data
+    # Fetch the policy content from the webpage
     policy_text = fetch_policy_data(selected_policy_url)
     
-    # Chunk the text
+    # Split the policy text into smaller chunks
     chunks = chunk_text(policy_text)
     
-    # Generate embeddings for the chunks and create a FAISS index
+    # Generate embeddings for text chunks and build a FAISS index
     embeddings = get_text_embedding(chunks)
     faiss_index = create_faiss_index(embeddings)
     
-    # Input box for query
+    # Input box for user query
     query = st.text_input("Enter your Query:")
     
     if query:
-        # Embed the user query and search for relevant chunks
+        # Generate an embedding for the user query and search for relevant text chunks
         query_embedding = np.array([get_text_embedding([query])[0].embedding])
         I = search_relevant_chunks(faiss_index, query_embedding, k=2)
         retrieved_chunks = [chunks[i] for i in I.tolist()[0]]
         context = " ".join(retrieved_chunks)
         
-        # Generate answer from the model
+        # Generate a response based on the retrieved context
         answer = mistral_answer(query, context)
         
-        # Display the answer
+        # Display the generated response
         st.text_area("Answer:", answer, height=200)
 
-# Run Streamlit app
+# Launch the Streamlit app
 if __name__ == '__main__':
     streamlit_app()
