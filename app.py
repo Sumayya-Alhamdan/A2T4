@@ -66,7 +66,7 @@ def mistral_answer(query, context):
 def streamlit_app():
     st.title('UDST Policies')
     st.markdown(
-        "<h3 style='color: #aea0fd;'>Your Customized Subtitle Here</h3>",
+        "<h3 style='color: #aea0fd;'>Ask a question about a policy</h3>",
         unsafe_allow_html=True
     )
 
