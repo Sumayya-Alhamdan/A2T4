@@ -64,7 +64,11 @@ def mistral_answer(query, context):
 
 # Streamlit Interface
 def streamlit_app():
-    st.title('UDST Policies Q&A')
+    st.title('UDST Policies')
+    st.markdown(
+        "<h3 style='color: #aea0fd;'>Your Customized Subtitle Here</h3>",
+        unsafe_allow_html=True
+    )
 
     # List of policies with descriptive names
     policies = [
