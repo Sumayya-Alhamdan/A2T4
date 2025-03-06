@@ -9,7 +9,7 @@ import time
 
 
 # Set up your Mistral API key
-api_key = "kOCiq0K2qXcwVxhh8vKRaC7POzJ5Un2m"
+api_key = "bR3uQ4MimCQdHqqPJpIIdCF4wKG51fL2"
 os.environ["MISTRAL_API_KEY"] = api_key
 
 # Fetching and parsing policy data
